@@ -10,6 +10,13 @@
 
 
 
+func fun func 
+
+x[x]
+adad
+
+ad
+ad
 
 
 #endif
