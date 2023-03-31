@@ -10,7 +10,7 @@
 #define TERMINAL_H_
 
 #include<stdio.h>
-
+#include"card.h"
 #include"standard_types.h"
 
 
@@ -54,7 +54,12 @@ typedef enum EN_terminalError_t
 EN_terminalError_t getTransactionDate(ST_terminalData_t* termData);
 
 
-//EN_terminalError_t isCardExpired(ST_cardData_t* cardData, ST_terminalData_t* termData);
+/*=====================================================================================================================================================*/
+/*= Describtion  : This function compares the card expiry date with the transaction date.                                                             =*/
+/*= Input : struct from ST_terminalData_t and another struct from  ST_cardData_t                                                                      =*/
+/*= Return  : If the card expiration date is before the transaction date will return EXPIRED_CARD, else return TERMINAL_OK                            =*/
+/*=====================================================================================================================================================*/
+EN_terminalError_t isCardExpired(ST_cardData_t* cardData, ST_terminalData_t* termData);
 
 /*=====================================================================================================*/
 /*= Describtion  : Ask the user for the transaction amount to validate it eith the amount in the card =*/
@@ -72,7 +77,11 @@ EN_terminalError_t getTransactionAmount(ST_terminalData_t* termData);
 EN_terminalError_t isBelowMaxAmount(ST_terminalData_t* termData);
 
 
-
+/*===========================================================================================================================================*/
+/*= Describtion  :  This function takes the maximum allowed amount and stores it into terminal data                                         =*/
+/*= Input : struct from ST_terminalData_t and Transaction max amount is a float number                                                      =*/
+/*= Return  :  If transaction max amount less than or equal to 0 will return the INVALID_MAX_AMOUNT error, else return TERMINAL_OK          =*/
+/*===========================================================================================================================================*/
 EN_terminalError_t setMaxAmount(ST_terminalData_t* termData, float maxAmount);
 
 /* EN_terminalError_t isValidCardPAN(ST_cardData_t* cardData);  Optional */
