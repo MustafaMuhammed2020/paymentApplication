@@ -1,0 +1,7 @@
+*.vs
+/*/*.sln
+*.vcxproj*
+/*/*/x64
+*.pdb
+*x64
+*.sln
