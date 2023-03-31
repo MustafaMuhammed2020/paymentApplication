@@ -7,7 +7,7 @@
 EN_cardError_t getCardHolderName(ST_cardData_t *cardData){
 
 	printf("\nPlease, Enter your card name: ");
-	fflsh(stdout);
+	//fflsh(stdout);
 	scanf("%s",&cardData->cardHolderName);
 
 	uint32_t len_name = strlen(cardData->cardHolderName);

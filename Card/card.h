@@ -3,7 +3,7 @@
 #define CARD_H_
 
 typedef unsigned char uint8_t;
-typedef unsigned int uint32_t;
+typedef unsigned long int uint32_t;
 
 
 typedef struct ST_cardData_t{

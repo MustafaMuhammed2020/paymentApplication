@@ -64,7 +64,14 @@ EN_terminalError_t getTransactionDate(ST_terminalData_t* termData);
 EN_terminalError_t getTransactionAmount(ST_terminalData_t* termData);
 
 
+/*===========================================================================================================================================*/
+/*= Describtion  :  This function compares the transaction amount with the terminal max allowed amount                                      =*/
+/*= Input : struct from ST_terminalData_t to comare its max amount with transaction amount                                                  =*/
+/*= Return  :  amount is larger than the terminal max allowed amount will return EXCEED_MAX_AMOUNT, else return TERMINAL_OK                 =*/
+/*===========================================================================================================================================*/
 EN_terminalError_t isBelowMaxAmount(ST_terminalData_t* termData);
+
+
 
 EN_terminalError_t setMaxAmount(ST_terminalData_t* termData, float maxAmount);
 
