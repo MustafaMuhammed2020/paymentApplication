@@ -10,6 +10,9 @@
 
 #include"Terminal.h"
 
+
+uint8_t transactionmonth = 0;
+
 EN_terminalError_t getTransactionDate(ST_terminalData_t* termData)
 {
 	/* Define variable from EN_terminalError_t to hold the return status */
@@ -43,6 +46,8 @@ EN_terminalError_t getTransactionDate(ST_terminalData_t* termData)
 
 	month = ((month1 * 10) + month2); /* represent the day as number */
 
+	transactionmonth = month; /* globally assign the transaction month */
+
 
 	/*=======================================================================*/
 	/*=                   year representation                               =*/
@@ -55,7 +60,7 @@ EN_terminalError_t getTransactionDate(ST_terminalData_t* termData)
 	year = ((year1 * 1000) + (year2 * 100) + (year3 * 10) + (year4) );
 	
 	/*========================================================================*/
-    /*=       validate the date in terms day, month and year                = */
+        /*=       validate the date in terms day, month and year                = */
 	/*========================================================================*/
 	
 	if ((day >= 1) && (day <= 31))
@@ -98,6 +103,55 @@ EN_terminalError_t getTransactionDate(ST_terminalData_t* termData)
 }
 
 
+EN_terminalError_t isCardExpired(ST_cardData_t* cardData, ST_terminalData_t* termData)
+{
+	EN_terminalError_t Localexpiredstatus = TERMINAL_OK; 
+
+	uint8_t year1 = 0, year2 = 0, year = 0 , month = 0 , month1 = 0, month2 = 0;
+
+	/*=======================================================================*/
+	/*=                 month representation                                =*/
+	/*=======================================================================*/
+	month1 = cardData->cardExpirationDate[0] - 48; /* Convert character to number */
+	month2 = cardData->cardExpirationDate[1] - 48; /* Convert character to number */
+
+	month = ((month1 * 10) + month2); /* represent the day as number */
+
+
+	/*=======================================================================*/
+	/*=                   year representation                               =*/
+	/*=======================================================================*/
+	year1 = cardData->cardExpirationDate[3] - 48;  /* Convert character to number */
+	year2 = cardData->cardExpirationDate[4] - 48;  /* Convert character to number */
+
+	year = ((year1 * 10) + year2);
+	
+
+
+	if (year < 24)
+	{
+		printf("your card is expired\n");
+		Localexpiredstatus = EXPIRED_CARD;  /* card is expired */
+	}
+
+	else if (year == 24 )
+	{
+		if (transactionmonth > month)
+		{
+			printf("Your card is expired\n");
+			Localexpiredstatus = EXPIRED_CARD;  /* card is expired */
+		}
+	}
+	else
+	{
+		Localexpiredstatus = TERMINAL_OK; /* card not valid */
+	}
+
+	return Localexpiredstatus;
+}
+
+
+
 EN_terminalError_t getTransactionAmount(ST_terminalData_t* termData)
 {
 	EN_terminalError_t Localamountstatus = TERMINAL_OK; /* Variable to holds the function status */
@@ -114,8 +168,48 @@ EN_terminalError_t getTransactionAmount(ST_terminalData_t* termData)
 	else
 	{
 		termData->transAmount = amount; /* Save the amount */
+
 		Localamountstatus = TERMINAL_OK ;
 	}
 
 	return Localamountstatus; /* Return the final status */
+}
+
+
+EN_terminalError_t isBelowMaxAmount(ST_terminalData_t* termData)
+{
+	EN_terminalError_t Localmaxamountstatus = TERMINAL_OK ; /* Variable to hold the function status  */
+
+	//termData->maxTransAmount = 5000 ; /* Maximum tranamission amount */
+
+	/* Check the status of the amount inserted by the user */
+	if (termData->transAmount > termData->maxTransAmount )
+	{
+		Localmaxamountstatus = EXCEED_MAX_AMOUNT ; /* Amount isn't valid */
+	}
+
+	else
+	{
+		Localmaxamountstatus = TERMINAL_OK ; /* Amount is valid */
+	}
+
+	return Localmaxamountstatus ; /* Return the final state */
+}
+
+
+EN_terminalError_t setMaxAmount(ST_terminalData_t* termData, float maxAmount)
+{
+	EN_terminalError_t LocalMaxamoutsetstatus = TERMINAL_OK ; /* Variable to hold the return type of the function */
+
+	if (maxAmount <= 0)
+	{
+		printf("The max transaction amount isn't valid\n");
+		LocalMaxamoutsetstatus = INVALID_MAX_AMOUNT ; 
+	}
+	else
+	{
+		termData->maxTransAmount = maxAmount; /* Set the max transaction amount */
+	}
+	
+	return LocalMaxamoutsetstatus ; /* Return the final status */
 }

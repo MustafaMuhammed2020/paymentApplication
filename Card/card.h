@@ -2,8 +2,13 @@
 #ifndef CARD_H_
 #define CARD_H_
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+
 typedef unsigned char uint8_t;
-typedef unsigned int uint32_t;
+typedef unsigned long int uint32_t;
 
 
 typedef struct ST_cardData_t{
