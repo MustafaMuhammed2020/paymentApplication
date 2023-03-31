@@ -10,8 +10,7 @@
 #define TERMINAL_H_
 
 #include<stdio.h>
-
-#include"standard_types.h"
+#include<stdint.h>
 
 
 /****************************************/

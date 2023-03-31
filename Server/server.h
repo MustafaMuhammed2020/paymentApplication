@@ -1,7 +1,7 @@
 /***************************************************************/
-/* AUNTHOR : 
-/* DATE  :
-/* VERSION  :
+/* AUNTHOR : Omar Taha
+/* DATE  : 30/3/2023
+/* VERSION  : v1
 /* HINT  :
 /***********************************************
 */
@@ -9,7 +9,9 @@
 #define SERVER_H
 #include <stdint.h>
 #include <stdio.h>
-
+#include "\Sprints\paymentApplication\Terminal\terminal.h"
+#include "\Sprints\paymentApplication\Application\app.h"
+#include "\Sprints\paymentApplication\Card\card.h"
 
 
 typedef enum EN_transState_t
@@ -19,6 +21,7 @@ typedef enum EN_transState_t
 
 typedef struct ST_transaction_t
 {
+
     ST_cardData_t cardHolderData;
     ST_terminalData_t terminalData;
     EN_transState_t transState;
@@ -46,11 +49,14 @@ typedef struct ST_accountsDB_t
 
 
 EN_transState_t recieveTransactionData(ST_transaction_t* transData);
+void recieveTransactionDataTest(void);
+
 EN_serverError_t isValidAccount(ST_cardData_t* cardData, ST_accountsDB_t* accountRefrence);
 EN_serverError_t isBlockedAccount(ST_accountsDB_t* accountRefrence);
 EN_serverError_t isAmountAvailable(ST_terminalData_t* termData, ST_accountsDB_t* accountRefrence);
 EN_serverError_t saveTransaction(ST_transaction_t* transData);
 void listSavedTransactions(void);
+//ST_accountsDB_t getDataBase(ST_accountsDB_t* DB);
 
 
 #endif
