@@ -25,7 +25,7 @@ EN_terminalError_t getTransactionDate(ST_terminalData_t* termData)
 
 	scanf("%s", termData->transactionDate); /* Scan the date from user the */
 
-    /*=======================================================================*/
+        /*=======================================================================*/
 	/*=                    day representation                               =*/
 	/*=======================================================================*/
 	day1 = termData->transactionDate[0] - 48; /* Convert character to number */
@@ -55,7 +55,7 @@ EN_terminalError_t getTransactionDate(ST_terminalData_t* termData)
 	year = ((year1 * 1000) + (year2 * 100) + (year3 * 10) + (year4) );
 	
 	/*========================================================================*/
-    /*=       validate the date in terms day, month and year                = */
+        /*=       validate the date in terms day, month and year                = */
 	/*========================================================================*/
 	
 	if ((day >= 1) && (day <= 31))
@@ -114,8 +114,30 @@ EN_terminalError_t getTransactionAmount(ST_terminalData_t* termData)
 	else
 	{
 		termData->transAmount = amount; /* Save the amount */
+
 		Localamountstatus = TERMINAL_OK ;
 	}
 
 	return Localamountstatus; /* Return the final status */
+}
+
+
+EN_terminalError_t isBelowMaxAmount(ST_terminalData_t* termData)
+{
+	EN_terminalError_t Localmaxamountstatus = TERMINAL_OK ; /* Variable to hold the function status  */
+
+	termData->maxTransAmount = 5000 ; /* Maximum tranamission amount */
+
+	/* Check the status of the amount inserted by the user */
+	if (termData->transAmount > termData->maxTransAmount )
+	{
+		Localmaxamountstatus = EXCEED_MAX_AMOUNT ; /* Amount isn't valid */
+	}
+
+	else
+	{
+		Localmaxamountstatus = TERMINAL_OK ; /* Amount is valid */
+	}
+
+	return Localmaxamountstatus ; /* Return the final state */
 }
