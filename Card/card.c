@@ -52,18 +52,26 @@ EN_cardError_t getCardExpiryDate(ST_cardData_t *cardData){
 
 
 
-/*
+
 EN_cardError_t getCardPAN(ST_cardData_t *cardData){
+        
+        EN_cardError_t  Localpanstatus = CARD_OK ;
 
 	printf("\nPlease, Enter your primaryAccountNumber: ");
 	//fflsh(stdout);
-	scanf("%s",&cardData->primaryAccountNumber);
+
+	scanf("%s",cardData->primaryAccountNumber);
 
 	uint32_t len_PAN = strlen(cardData->primaryAccountNumber);
 
 	if(len_PAN >19 || len_PAN <16 || len_PAN == 0)
-		return WRONG_PAN ;
+		{
+                      Localpanstatus = WRONG_PAN ;
+                }
+	else
+		{
+                      Localpanstatus = CARD_OK;
+		}
 
-	return CARD_OK;
+	return Localpanstatus ;
 }
-*/
