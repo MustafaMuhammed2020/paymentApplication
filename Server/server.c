@@ -1,18 +1,33 @@
 #include "server.h"
 #define MAX_LINE_LENGTH 100
 
-ST_transaction_t  transDB[255] = { 0 };
-ST_accountsDB_t accountsDB[255] = { '\0' };
 
+	//accountsDB[0].balance=10000.0;
+	//accountsDB[0].balance = 10000.0;
 
+//ST_accountsDB_t account1 = { 2000.0, RUNNING, "8989374615436851" };
+//ST_accountsDB_t account2 = { 2000.0, RUNNING, "8989374615436851" };
+//ST_accountsDB_t account3 = { 2000.0, RUNNING, "8989374615436851" };
+//ST_accountsDB_t account4 = { 2000.0, RUNNING, "8989374615436851" };
+//ST_accountsDB_t account5 = { 100000.0, BLOCKED, "5807007076043875" };
 
+ST_transaction_t  transDB[255]={0};
+ST_accountsDB_t accountsDB[255]={0};
 
 
 
 EN_transState_t recieveTransactionData(ST_transaction_t* transData)
 {
+	//scanf("%f",transData->terminalData.transAmount);
+	
+	
+	
+	
 	ST_accountsDB_t accountRefrence;
-	transData->transState = APPROVED; /*Default State is APPROVED*/
+	
+	
+	
+	transData->transState = APPROVED;
 	if (isValidAccount(&transData->cardHolderData, &accountRefrence) == ACCOUNT_NOT_FOUND)
 	{
 		transData->transState = FRAUD_CARD;
@@ -33,26 +48,31 @@ EN_transState_t recieveTransactionData(ST_transaction_t* transData)
 		accountRefrence.balance -= transData->terminalData.transAmount;
 	}
 	
-	if (saveTransaction(&transData) == SAVING_FAILED)
+	
+	/*if (saveTransaction(transData) == SAVING_FAILED)
 	{
 		transData->transState = INTERNAL_SERVER_ERROR;
-	}
+	}*/
 
 	return transData->transState;
 }
 
-void recieveTransactionDataTest(void)
+/*void recieveTransactionDataTest(void)
 {
 	recieveTransactionData(transDB);
-}
+}*/
 
 EN_serverError_t isValidAccount(ST_cardData_t* cardData, ST_accountsDB_t* accountRefrence)
 {
-	for (int i = 0;i < 255 && strlen(accountsDB[i].primaryAccountNumber) != 0;i++)
+	for (int i = 0;i < 255 && accountsDB[i].primaryAccountNumber != '\0';i++)
 	{
-		if (!strcmp(accountsDB[i].primaryAccountNumber,cardData->primaryAccountNumber)) /*strcmp(string1,string2) compares between 2 strings and return 0 if equal*/
+		if (strcmp(accountsDB[i].primaryAccountNumber, cardData->primaryAccountNumber) == 0)
 		{
-			*accountRefrence = accountsDB[i];
+			accountRefrence->balance = accountsDB[i].balance;
+			accountRefrence->state = accountsDB[i].state;
+			strcpy(accountRefrence->primaryAccountNumber, accountsDB[i].primaryAccountNumber);
+			
+			
 			return SERVER_OK;
 		}
 	}
@@ -69,8 +89,10 @@ EN_serverError_t isAmountAvailable(ST_terminalData_t* termData, ST_accountsDB_t*
 {
 	if ((termData->transAmount) > (accountRefrence->balance))
 	{
+		printf("accountsDB[0].balance=%d \n",accountsDB[0].balance);
 		return LOW_BALANCE;
 	}
+	
 	return SERVER_OK;
 }
 
@@ -80,7 +102,16 @@ EN_serverError_t saveTransaction(ST_transaction_t* transData)
 	{
 		if (transDB[i].transactionSequenceNumber == 0)
 		{
-			transDB[i] = *transData;
+			
+			strcpy(transDB[i].terminalData.transactionDate, transData->terminalData.transactionDate);
+			transDB[i].terminalData.transAmount=transData->terminalData.transAmount;
+			transDB[i].transState=transData->transState;
+			transDB[i].terminalData.maxTransAmount=transData->terminalData.maxTransAmount;
+			strcpy(transDB[i].cardHolderData.cardHolderName, transData->cardHolderData.cardHolderName);
+			strcpy(transDB[i].cardHolderData.primaryAccountNumber, transData->cardHolderData.primaryAccountNumber);
+			strcpy(transDB[i].cardHolderData.cardExpirationDate, transData->cardHolderData.cardExpirationDate);
+			transDB[i].terminalData.transAmount = transData->terminalData.transAmount;
+			//transDB[i] = *transData;
 			transDB[i].transactionSequenceNumber = (i + 1);
 			return SERVER_OK;
 		}
@@ -90,19 +121,20 @@ EN_serverError_t saveTransaction(ST_transaction_t* transData)
 
 void listSavedTransactions(void)
 {
-	for (int i = 1;i < 255;i++) 
+	for (int i = 0;i < 255;i++) 
 	{
 		if (transDB[i].transactionSequenceNumber > 0)
 		{
 			printf("################################\n");
 			printf("Transaction Sequence Number: %d \n",transDB[i].transactionSequenceNumber);
-			printf("Transaction Date: %d \n", transDB[i].terminalData.transactionDate);
-			printf("Transaction Amount: %d \n", transDB[i].terminalData.transAmount);
-			printf("Transaction State: %d \n", transDB[i].transState);
-			printf("Terminal Max Amount: %d \n", transDB[i].terminalData.maxTransAmount);
-			printf("Cardholder Name: %d \n", transDB[i].cardHolderData.cardHolderName);
-			printf("PAN: %d \n", transDB[i].cardHolderData.primaryAccountNumber);
-			printf("Card Expiration Date: %d \n", transDB[i].cardHolderData.cardExpirationDate);
+			printf("Transaction Date: %s \n", transDB[i].terminalData.transactionDate);
+			printf("Transaction Amount: %f \n", transDB[i].terminalData.transAmount);
+			if(transDB[i].transState == APPROVED)
+				printf("Transaction State: APPROVED \n");
+			printf("Terminal Max Amount: %f \n", transDB[i].terminalData.maxTransAmount);
+			printf("Cardholder Name: %s \n", transDB[i].cardHolderData.cardHolderName);
+			printf("PAN: %s \n", transDB[i].cardHolderData.primaryAccountNumber);
+			printf("Card Expiration Date: %s \n", transDB[i].cardHolderData.cardExpirationDate);
 			printf("################################\n");
 
 		}
@@ -122,12 +154,14 @@ void getDataBase(ST_accountsDB_t* DB)
 	FILE* file = fopen(path, "r");
 
 	while (fgets(line, MAX_LINE_LENGTH, file)) //Reads each line from the file and assigns each elements to it's corresponding element in the database
-	{ 
-		
+	{
+
 		tok = strtok(line, ","); /*Splits the string to tokens containing the string until the next "," */
 
 		if (tok)
 			DB[i].balance = atof(tok); /*Converts string to float*/
+
+		
 
 		tok = strtok(NULL, ",");
 
@@ -140,21 +174,68 @@ void getDataBase(ST_accountsDB_t* DB)
 			strcpy(&DB[i].primaryAccountNumber, tok); /*Copy the token string to PAN*/
 		i++;
 	}
-	
+    
 }
 
-
-//void main()
+//ST_accountsDB_t getDataBase(ST_accountsDB_t* DB)
 //{
-//	getDataBase(accountsDB);
-//	if (!strcmp(accountsDB[0].primaryAccountNumber, "8989374615436851"))
-//	{
-//		printf("FOUND\n");
+//	FILE* infile;
+//	infile = fopen("Project_Database.txt", "r");
+//	if (infile == NULL) {
+//		fprintf(stderr, "\nError opening file\n");
+//		exit(1);
 //	}
-//	for(int i=0;i<255 && strlen(accountsDB[i].primaryAccountNumber) != 0;i++)
-//	{
-//		printf("Balance : %f\nState   : %d\nPAN     : %s\n---------------\n", accountsDB[i].balance, accountsDB[i].state, accountsDB[i].primaryAccountNumber);
-//	}
+//	fread(accountsDB, sizeof(accountsDB), 1, infile);
+//}
+
 //
-//	system("pause");
+//int readTxtFile(const char* filename, ST_accountsDB_t* accounts) {
+//	FILE* fin = fopen(filename, "r");
+//	if (!fin) {
+//		printf("Can't open file: %s\n", filename);
+//		return 0;
+//	}
+//	int i = 0;
+//
+//	char* lineptr = NULL;
+//	size_t size = 0;
+//	/*
+//	ssize_t getline(char **lineptr, size_t *n, FILE *stream);
+//	while (fscanf(fin, "%d%s %d",
+//				  &students[i].stNo,
+//				  students[i].name,
+//				  &students[i].points))
+//				  */
+//
+//
+//	while (getline(&lineptr, &size, fin) != -1)
+//	{
+//		parse_accounts(lineptr, &accounts[i].balance, &accounts[i].primaryAccountNumber, &accounts[i].state);
+//		i++;
+//	}
+//	free(lineptr);
+//	lineptr = NULL;
+//	fclose(fin);
+//	return i;
+//}
+
+//void parse_accounts(char* line, float* balance, uint8_t* pan, EN_accountState_t* state)
+//{
+//	char* tok = NULL;
+//
+//	tok = strtok(line, ",");
+//	if (tok)
+//		*balance = atoi(tok);
+//
+//	tok = strtok(NULL, ",");
+//	if (tok)
+//		strcpy(pan, tok);
+//
+//	tok = strtok(NULL, ",");
+//	if (tok)
+//		*state = atoi(tok);
+//}
+//
+//void main() {
+//	readTxtFile("file.txt", &accountsDB);
 //}

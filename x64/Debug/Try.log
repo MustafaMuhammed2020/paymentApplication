@@ -1,0 +1,8 @@
+﻿  app.c
+  main.c
+  server.c
+E:\mohab\academy\sprints\projects\new\paymentApplication\server\server.c(92,10): warning C4477: 'printf' : format string '%d' requires an argument of type 'int', but variadic argument 1 has type 'double'
+E:\mohab\academy\sprints\projects\new\paymentApplication\server\server.c(174,38): warning C4047: 'function': 'char *' differs in levels of indirection from 'uint8_t (*)[20]'
+E:\mohab\academy\sprints\projects\new\paymentApplication\server\server.c(174,11): warning C4024: 'strcpy': different types for formal and actual parameter 1
+  Generating Code...
+  Try.vcxproj -> E:\mohab\academy\sprints\projects\new\paymentApplication\x64\Debug\Try.exe

@@ -1,25 +1,26 @@
 #include<stdlib.h>
 #include<string.h>
-#include"card.h"
-#include"terminal.h"
-#include"server.h"
+
 #include"app.h"
 
 void appStart(void)
 {
+	
 	ST_cardData_t card;
 	ST_terminalData_t terminal;
 	ST_transaction_t transaction;
 	EN_transState_t error;
-
+	EN_terminalError_t Amountstate;
+	EN_terminalError_t Maxamountstate;
+	
 	getCardHolderName(&card); /*get the card holder name*/
 	getCardExpiryDate(&card);/*get the card expiray date*/
 	getCardPAN(&card);/*get the card PAN*/
 	
 	//strcpy(transaction.cardHolderData.primaryAccountNumber,card.primaryAccountNumber);
-	strcpy(transaction.terminalData.transactionDate,terminal.transactionDate);
+	
 	strcpy(transaction.cardHolderData.cardExpirationDate,card.cardExpirationDate);
-	transaction.terminalData.transAmount=terminal.transAmount;
+	
 	strcpy(transaction.cardHolderData.primaryAccountNumber,card.primaryAccountNumber);
 	
 	if (getTransactionDate(&terminal) == WRONG_DATE)
@@ -27,6 +28,7 @@ void appStart(void)
 		printf("Declined\nwrong card date\n");
 		exit(0);
 	}
+	strcpy(transaction.terminalData.transactionDate,terminal.transactionDate);
 	
 	
 	if (isCardExpired(&card, &terminal) == EXPIRED_CARD)
@@ -34,24 +36,30 @@ void appStart(void)
 		printf("Declined\nExpired card\n");
 		exit(0);
 	}
+	setMaxAmount(&terminal, 5000);
 	
-	
+	do
+    {
+        Amountstate = getTransactionAmount(&terminal) ;  /* Ask the user for the transaction amount*/ 
 
-	if (getTransactionAmount(&terminal) == INVALID_AMOUNT)
+        Maxamountstate = isBelowMaxAmount(&terminal) ;  /* Ceck the amount valid or not */
+
+    } while (Maxamountstate!= TERMINAL_OK);
+
+	/*if (getTransactionAmount(&terminal) == INVALID_AMOUNT)
 	{
 		printf("Declined\nInvalid Amount\n");
 		exit(0);
 	}
-	
+	transaction.terminalData.transAmount=terminal.transAmount;
 	
 	if (isBelowMaxAmount(&terminal) == EXCEED_MAX_AMOUNT)
 	{
 		printf("Declined\nAmount exceeding lemit\n");
 		exit(0);
-	}
+	}*/
 	
 	transaction.terminalData.maxTransAmount = terminal.maxTransAmount;
-	printf("transaction max amount%f\n",transaction.terminalData.maxTransAmount);
 	transaction.terminalData.transAmount=terminal.transAmount;
 	strcpy(transaction.cardHolderData.cardHolderName,card.cardHolderName);
 	error = recieveTransactionData(&transaction);
@@ -76,6 +84,6 @@ void appStart(void)
 	
 	
 	
-	saveTransaction(&transaction);
+	if(saveTransaction(&transaction)==SERVER_OK)
 	listSavedTransactions();
 }

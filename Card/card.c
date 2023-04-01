@@ -19,7 +19,7 @@ EN_cardError_t getCardHolderName(ST_cardData_t *cardData){
 
 	uint32_t len_name = strlen(cardData->cardHolderName);
 
-	if (len_name > 24 || len_name < 20 || len_name == NULL)
+	if (len_name > 24 || len_name < 20 || len_name == 0)
 	{
 		returnstate = WRONG_NAME;
 	}
@@ -52,7 +52,7 @@ EN_cardError_t getCardExpiryDate(ST_cardData_t *cardData){
 
 
 
-/*
+
 EN_cardError_t getCardPAN(ST_cardData_t *cardData){
 
 	printf("\nPlease, Enter your primaryAccountNumber: ");
@@ -66,4 +66,3 @@ EN_cardError_t getCardPAN(ST_cardData_t *cardData){
 
 	return CARD_OK;
 }
-*/

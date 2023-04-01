@@ -10,8 +10,7 @@
 #define TERMINAL_H_
 
 #include<stdio.h>
-#include"card.h"
-#include"standard_types.h"
+#include"..\Card\card.h"
 
 
 /****************************************/

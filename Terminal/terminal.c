@@ -81,15 +81,14 @@ EN_terminalError_t getTransactionDate(ST_terminalData_t* termData)
 		validDate = 0;
 	}
 
-	if (year == 2024)
+	/*if (year == 2024)
 	{
-		/* Do nothing */
+		/* Do nothing 
 	}
 	else
 	{
 		validDate = 0;
-	}
-
+	}*/
 	if (validDate == 0)
 	{
 		Localreturnstatus = WRONG_DATE;  /* Date is not valid */
@@ -168,7 +167,7 @@ EN_terminalError_t getTransactionAmount(ST_terminalData_t* termData)
 	else
 	{
 		termData->transAmount = amount; /* Save the amount */
-
+		
 		Localamountstatus = TERMINAL_OK ;
 	}
 
@@ -180,7 +179,7 @@ EN_terminalError_t isBelowMaxAmount(ST_terminalData_t* termData)
 {
 	EN_terminalError_t Localmaxamountstatus = TERMINAL_OK ; /* Variable to hold the function status  */
 
-	//termData->maxTransAmount = 5000 ; /* Maximum tranamission amount */
+	termData->maxTransAmount = 5000 ; /* Maximum tranamission amount */
 
 	/* Check the status of the amount inserted by the user */
 	if (termData->transAmount > termData->maxTransAmount )

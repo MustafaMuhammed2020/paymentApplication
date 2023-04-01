@@ -12,9 +12,9 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include "\Sprints\paymentApplication\Terminal\terminal.h"
-#include "\Sprints\paymentApplication\Application\app.h"
-#include "\Sprints\paymentApplication\Card\card.h"
+#include "..\Terminal\terminal.h"
+#include "..\Application\app.h"
+#include "..\Card\card.h"
 
 
 
@@ -137,6 +137,9 @@ void listSavedTransactions(void);
 /*= Important Note : The file name is: file.txt and should be placed in the main folder of the project and Data format inside the file should be balance,state in decimal value,PAN and followed by a newline right after.         =*/
 /*==================================================================================================================================================================================================================================*/
 void getDataBase(ST_accountsDB_t* DB);
+
+ST_transaction_t  transDB[255];
+ST_accountsDB_t accountsDB[255];
 
 
 #endif
