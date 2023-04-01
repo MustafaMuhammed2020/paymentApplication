@@ -1,7 +1,7 @@
 #ifndef _app_h_
 #define _app_h_
 
-#include "\Sprints\paymentApplication\Server\server.h"
+#include "\sprints_tasks\sprint 2\payment_App\paymentApplication\Server\server.h"
 
 void appStart(void);
 

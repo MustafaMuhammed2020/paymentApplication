@@ -12,9 +12,9 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include "\Sprints\paymentApplication\Terminal\terminal.h"
-#include "\Sprints\paymentApplication\Application\app.h"
-#include "\Sprints\paymentApplication\Card\card.h"
+#include "\sprints_tasks\sprint 2\payment_App\paymentApplication\Terminal\terminal.h"
+#include "\sprints_tasks\sprint 2\payment_App\paymentApplication\Application\app.h"
+#include "\sprints_tasks\sprint 2\payment_App\paymentApplication\Card\card.h"
 
 
 
