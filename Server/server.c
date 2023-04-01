@@ -1,14 +1,10 @@
 #include "server.h"
-
+#define MAX_LINE_LENGTH 100
 
 ST_transaction_t  transDB[255] = { 0 };
-ST_accountsDB_t accountsDB[255];
+ST_accountsDB_t accountsDB[255] = { '\0' };
 
-ST_accountsDB_t account1 = { 2000.0, RUNNING, "8989374615436851" };
-ST_accountsDB_t account2 = { 2000.0, RUNNING, "8989374615436851" };
-ST_accountsDB_t account3 = { 2000.0, RUNNING, "8989374615436851" };
-ST_accountsDB_t account4 = { 2000.0, RUNNING, "8989374615436851" };
-ST_accountsDB_t account5 = { 100000.0, BLOCKED, "5807007076043875" };
+
 
 
 
@@ -16,7 +12,7 @@ ST_accountsDB_t account5 = { 100000.0, BLOCKED, "5807007076043875" };
 EN_transState_t recieveTransactionData(ST_transaction_t* transData)
 {
 	ST_accountsDB_t accountRefrence;
-	transData->transState = APPROVED;
+	transData->transState = APPROVED; /*Default State is APPROVED*/
 	if (isValidAccount(&transData->cardHolderData, &accountRefrence) == ACCOUNT_NOT_FOUND)
 	{
 		transData->transState = FRAUD_CARD;
@@ -52,9 +48,9 @@ void recieveTransactionDataTest(void)
 
 EN_serverError_t isValidAccount(ST_cardData_t* cardData, ST_accountsDB_t* accountRefrence)
 {
-	for (int i = 0;i < 255 && accountsDB[i].primaryAccountNumber != '\0';i++)
+	for (int i = 0;i < 255 && strlen(accountsDB[i].primaryAccountNumber) != 0;i++)
 	{
-		if (accountsDB[i].primaryAccountNumber == (cardData->primaryAccountNumber))
+		if (!strcmp(accountsDB[i].primaryAccountNumber,cardData->primaryAccountNumber)) /*strcmp(string1,string2) compares between 2 strings and return 0 if equal*/
 		{
 			*accountRefrence = accountsDB[i];
 			return SERVER_OK;
@@ -116,65 +112,49 @@ void listSavedTransactions(void)
 	}
 }
 
-//ST_accountsDB_t getDataBase(ST_accountsDB_t* DB)
-//{
-//	FILE* infile;
-//	infile = fopen("Project_Database.txt", "r");
-//	if (infile == NULL) {
-//		fprintf(stderr, "\nError opening file\n");
-//		exit(1);
-//	}
-//	fread(accountsDB, sizeof(accountsDB), 1, infile);
-//}
+void getDataBase(ST_accountsDB_t* DB)
+{
+	char* tok = NULL;
+	char* path = "file.txt";
+	char line[MAX_LINE_LENGTH] = { 0 };
+	int i = 0;
 
-//
-//int readTxtFile(const char* filename, ST_accountsDB_t* accounts) {
-//	FILE* fin = fopen(filename, "r");
-//	if (!fin) {
-//		printf("Can't open file: %s\n", filename);
-//		return 0;
-//	}
-//	int i = 0;
-//
-//	char* lineptr = NULL;
-//	size_t size = 0;
-//	/*
-//	ssize_t getline(char **lineptr, size_t *n, FILE *stream);
-//	while (fscanf(fin, "%d%s %d",
-//				  &students[i].stNo,
-//				  students[i].name,
-//				  &students[i].points))
-//				  */
-//
-//
-//	while (getline(&lineptr, &size, fin) != -1)
+	FILE* file = fopen(path, "r");
+
+	while (fgets(line, MAX_LINE_LENGTH, file)) //Reads each line from the file and assigns each elements to it's corresponding element in the database
+	{ 
+		
+		tok = strtok(line, ","); /*Splits the string to tokens containing the string until the next "," */
+
+		if (tok)
+			DB[i].balance = atof(tok); /*Converts string to float*/
+
+		tok = strtok(NULL, ",");
+
+		if (tok)
+			DB[i].state = atoi(tok); /*Converts string to integer*/
+
+		tok = strtok(NULL, "\n"); /*Last token is followed by a newline so delimeter is changed to "\n"*/
+
+		if (tok)
+			strcpy(&DB[i].primaryAccountNumber, tok); /*Copy the token string to PAN*/
+		i++;
+	}
+	
+}
+
+
+//void main()
+//{
+//	getDataBase(accountsDB);
+//	if (!strcmp(accountsDB[0].primaryAccountNumber, "8989374615436851"))
 //	{
-//		parse_accounts(lineptr, &accounts[i].balance, &accounts[i].primaryAccountNumber, &accounts[i].state);
-//		i++;
+//		printf("FOUND\n");
 //	}
-//	free(lineptr);
-//	lineptr = NULL;
-//	fclose(fin);
-//	return i;
-//}
-
-//void parse_accounts(char* line, float* balance, uint8_t* pan, EN_accountState_t* state)
-//{
-//	char* tok = NULL;
+//	for(int i=0;i<255 && strlen(accountsDB[i].primaryAccountNumber) != 0;i++)
+//	{
+//		printf("Balance : %f\nState   : %d\nPAN     : %s\n---------------\n", accountsDB[i].balance, accountsDB[i].state, accountsDB[i].primaryAccountNumber);
+//	}
 //
-//	tok = strtok(line, ",");
-//	if (tok)
-//		*balance = atoi(tok);
-//
-//	tok = strtok(NULL, ",");
-//	if (tok)
-//		strcpy(pan, tok);
-//
-//	tok = strtok(NULL, ",");
-//	if (tok)
-//		*state = atoi(tok);
-//}
-//
-//void main() {
-//	readTxtFile("file.txt", &accountsDB);
+//	system("pause");
 //}

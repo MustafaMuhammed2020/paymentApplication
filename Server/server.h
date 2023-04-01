@@ -11,6 +11,7 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 #include "\Sprints\paymentApplication\Terminal\terminal.h"
 #include "\Sprints\paymentApplication\Application\app.h"
 #include "\Sprints\paymentApplication\Card\card.h"
@@ -129,7 +130,13 @@ EN_serverError_t saveTransaction(ST_transaction_t* transData);
 /*========================================================================================*/
 void listSavedTransactions(void);
 
-//ST_accountsDB_t getDataBase(ST_accountsDB_t* DB);
+/*==================================================================================================================================================================================================================================*/
+/*= Description    : Reads Data from the database file and copies it to an array                                                                                                                                                   =*/
+/*= Inputs         : Refrence to an array of type ST_accountsDB_t                                                                                                                                                                  =*/
+/*= Return         : Void                                                                                                                                                                                                          =*/
+/*= Important Note : The file name is: file.txt and should be placed in the main folder of the project and Data format inside the file should be balance,state in decimal value,PAN and followed by a newline right after.         =*/
+/*==================================================================================================================================================================================================================================*/
+void getDataBase(ST_accountsDB_t* DB);
 
 
 #endif
