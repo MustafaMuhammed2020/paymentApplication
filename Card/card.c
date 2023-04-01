@@ -14,14 +14,20 @@ EN_cardError_t getCardHolderName(ST_cardData_t *cardData){
 
 	printf("\nPlease, Enter your card name: ");
 	//fflsh(stdout);
+	gets(cardData->cardHolderName);
+	//scanf("%[^\n]",cardDatas->cardHolderName);
+	//getch();
 
-	scanf("%[^\n]",cardData->cardHolderName);  
 
 	uint32_t len_name = strlen(cardData->cardHolderName);
 
 	if (len_name > 24 || len_name < 20 || len_name == NULL)
 	{
 		returnstate = WRONG_NAME;
+	}
+	else 
+	{
+		return CARD_OK;
 	}
 		
 
@@ -34,10 +40,10 @@ EN_cardError_t getCardExpiryDate(ST_cardData_t *cardData){
 
 	EN_cardError_t expireddatestate = CARD_OK; 
 
-	printf("\nPlease, Enter the Expire date (MM/YY): ");
+	printf("\nPlease, Enter the Expiry date (MM/YY): ");
 	//fflsh(stdout);
-
-	scanf("%s", cardData->cardExpirationDate);
+	gets(cardData->cardExpirationDate);
+	//scanf("%s", cardData->cardExpirationDate);
 
 	uint32_t len_date = strlen(cardData->cardExpirationDate);
 

@@ -8,33 +8,45 @@ void appStart(void)
 	EN_terminalError_t Amountstate = TERMINAL_OK;
 	ST_transaction_t transaction;
 	EN_transState_t error;
+	EN_cardError_t nameState,dateState,panState = 0;
+	
+	do
+	{
+		nameState = getCardHolderName(&card); /*get the card holder name*/
+		
+	} while (nameState);
 
-	
-	
-	getCardHolderName(&card); /*get the card holder name*/
-	getCardExpiryDate(&card);/*get the card expiray date*/
-	getCardPAN(&card);/*get the card PAN*/
+	do
+	{
+		dateState=getCardExpiryDate(&card);/*get the card expiray date*/
+
+	} while (dateState);
+
+	panState=getCardPAN(&card);/*get the card PAN*/
+	if (panState)
+	{
+		printf("\nWrong PAN!\n");
+		return;
+	}
 
 
 
 	strcpy(transaction.cardHolderData.cardExpirationDate, card.cardExpirationDate);
-
 	strcpy(transaction.cardHolderData.primaryAccountNumber, card.primaryAccountNumber);
 
 	if (getTransactionDate(&terminal) == WRONG_DATE)
 	{
-		printf("Declined\nwrong card date\n");
-		exit(0);
+		printf("Declined\nwrong card date\n");	
 	}
+
 	strcpy(transaction.terminalData.transactionDate, terminal.transactionDate);
 
 
 	if (isCardExpired(&card, &terminal) == EXPIRED_CARD)
 	{
 		printf("Declined\nExpired card\n");
-		exit(0);
+		return;
 	}
-
 
 	setMaxAmount(&terminal, 5000.00);
 	do

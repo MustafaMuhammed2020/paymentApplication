@@ -13,37 +13,43 @@ EN_transState_t recieveTransactionData(ST_transaction_t* transData)
 	if (isValidAccount(&transData->cardHolderData, &accountRefrence) == ACCOUNT_NOT_FOUND)
 	{
 		transData->transState = FRAUD_CARD;
+		printf("\nFraud Card\n");
 	}
 	
 	if (transData->transState == APPROVED && isBlockedAccount(&accountRefrence) == BLOCKED_ACCOUNT)
 	{
 		transData->transState = DECLINED_STOLEN_CARD;
+		printf("\nAccount is blocked\n");
 	}
 	
 	if (transData->transState == APPROVED && isAmountAvailable(&transData->terminalData, &accountRefrence) == LOW_BALANCE)
 	{
 		transData->transState = DECLINED_INSUFFECIENT_FUND;
+		printf("\nInsuffecient funds\n");
 	}
 
 	if(transData->transState == APPROVED)
 	{
 		accountRefrence.balance -= transData->terminalData.transAmount;
 		p->balance = accountRefrence.balance;
+		printf("\nSuccessful Transaction\n");
 	}
 
 	if (saveTransaction(&(*transData)) == SAVING_FAILED)
 	{
 		transData->transState = INTERNAL_SERVER_ERROR;
+		printf("\nSaving failed\n");
 	}
 
 	return transData->transState;
 }
 
 
-void recieveTransactionDataTest(void)
-{
-	recieveTransactionData(transDB);
-}
+//void recieveTransactionDataTest(void)
+//{
+//	printf("")
+//	recieveTransactionData(transDB);
+//}
 
 EN_serverError_t isValidAccount(ST_cardData_t* cardData, ST_accountsDB_t* accountRefrence)
 {
@@ -102,7 +108,16 @@ void listSavedTransactions(void)
 			printf("Transaction Sequence Number: %d \n",transDB[i].transactionSequenceNumber);
 			printf("Transaction Date           : %s \n", transDB[i].terminalData.transactionDate);
 			printf("Transaction Amount         : %f \n", transDB[i].terminalData.transAmount);
-			printf("Transaction State          : %d \n", transDB[i].transState);
+			if(transDB[i].transState==0)
+				printf("Transaction State          : %s \n", "Approved");
+			if (transDB[i].transState == 1)
+				printf("Transaction State          : %s \n", "DECLINED_INSUFFECIENT_FUND");
+			if (transDB[i].transState == 2)
+				printf("Transaction State          : %s \n", "DECLINED_STOLEN_CARD");
+			if (transDB[i].transState == 3)
+				printf("Transaction State          : %s \n", "FRAUD_CARD");
+			if (transDB[i].transState == 4)
+				printf("Transaction State          : %s \n", "INTERNAL_SERVER_ERROR");
 			printf("Terminal Max Amount        : %f \n", transDB[i].terminalData.maxTransAmount);
 			printf("Cardholder Name            : %s \n", transDB[i].cardHolderData.cardHolderName);
 			printf("PAN                        : %s \n", transDB[i].cardHolderData.primaryAccountNumber);
