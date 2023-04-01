@@ -3,6 +3,7 @@
 
 ST_transaction_t  transDB[255] = { 0 };
 ST_accountsDB_t accountsDB[255] = { '\0' };
+ST_accountsDB_t* p;
 
 
 EN_transState_t recieveTransactionData(ST_transaction_t* transData)
@@ -27,15 +28,17 @@ EN_transState_t recieveTransactionData(ST_transaction_t* transData)
 	if(transData->transState == APPROVED)
 	{
 		accountRefrence.balance -= transData->terminalData.transAmount;
+		p->balance = accountRefrence.balance;
 	}
-	
-	if (saveTransaction(&transData) == SAVING_FAILED)
+
+	if (saveTransaction(&(*transData)) == SAVING_FAILED)
 	{
 		transData->transState = INTERNAL_SERVER_ERROR;
 	}
 
 	return transData->transState;
 }
+
 
 void recieveTransactionDataTest(void)
 {
@@ -49,6 +52,7 @@ EN_serverError_t isValidAccount(ST_cardData_t* cardData, ST_accountsDB_t* accoun
 		if (!strcmp(accountsDB[i].primaryAccountNumber,cardData->primaryAccountNumber)) /*strcmp(string1,string2) compares between 2 strings and return 0 if equal*/
 		{
 			*accountRefrence = accountsDB[i];
+			p = &accountsDB[i];
 			return SERVER_OK;
 		}
 	}
@@ -77,16 +81,20 @@ EN_serverError_t saveTransaction(ST_transaction_t* transData)
 		if (transDB[i].transactionSequenceNumber == 0)
 		{
 			transDB[i] = *transData;
-			transDB[i].transactionSequenceNumber = (i + 1);
-			return SERVER_OK;
+			transDB[i].transactionSequenceNumber = (i+1);
+			break;
+			//return SERVER_OK;
 		}
 	}
-	return SAVING_FAILED;
+	listSavedTransactions();
+	return SERVER_OK;
+	//return SAVING_FAILED;
 }
 
 void listSavedTransactions(void)
 {
-	for (int i = 1;i < 255;i++) 
+
+	for (int i = 0;i < 255;i++) 
 	{
 		if (transDB[i].transactionSequenceNumber > 0)
 		{

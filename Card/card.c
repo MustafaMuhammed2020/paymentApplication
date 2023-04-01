@@ -52,7 +52,7 @@ EN_cardError_t getCardExpiryDate(ST_cardData_t *cardData){
 
 
 
-/*
+
 EN_cardError_t getCardPAN(ST_cardData_t *cardData){
 
 	printf("\nPlease, Enter your primaryAccountNumber: ");
@@ -66,4 +66,3 @@ EN_cardError_t getCardPAN(ST_cardData_t *cardData){
 
 	return CARD_OK;
 }
-*/

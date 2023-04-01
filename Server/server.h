@@ -20,6 +20,7 @@
 
 
 
+
 /*********************************************************/
 /* enum for tranaction state return errors               */
 /* returns 0 ==> approved transaction                    */
