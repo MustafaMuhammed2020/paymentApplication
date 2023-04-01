@@ -18,6 +18,8 @@
 
 
 
+
+
 /*********************************************************/
 /* enum for tranaction state return errors               */
 /* returns 0 ==> approved transaction                    */
@@ -83,11 +85,11 @@ typedef struct ST_accountsDB_t
     uint8_t primaryAccountNumber[20];
 }ST_accountsDB_t;
 
-/*============================================================================================================================================================*/
-/*= Description : Receives the transaction data and checks the account state, if the tansaction amount is available or not and saves the transaction data    =*/
-/*= Inputs      : Refrence to store the transaction data with the type of ST_transaction_t                                                                   =*/
-/*= Return      : Transaction State                                                                                                                          =*/
-/*============================================================================================================================================================*/
+/*==========================================================================================================================================================*/
+/* Description : Receives the transaction data and checks the account state, if the tansaction amount is available or not and saves the transaction data    */
+/* Inputs      : Refrence to store the transaction data with the type of ST_transaction_t                                                                   */
+/* Return      : Transaction State                                                                                                                          */
+/*==========================================================================================================================================================*/
 EN_transState_t recieveTransactionData(ST_transaction_t* transData);
 
 /*======================================*/
@@ -95,11 +97,11 @@ EN_transState_t recieveTransactionData(ST_transaction_t* transData);
 /*======================================*/
 void recieveTransactionDataTest(void);
 
-/*=========================================================================================================================================================================================================*/
-/*= Description : Receives the cardholder data, start searching for it in the database and updates the accountRefrence variable with the current accoount data                                            =*/
-/*= Inputs      : Refrence to the cardholder data with the type of ST_cardData_t and refrence to a current account data with the type of ST_accountsDB_t                                                  =*/                                                                
-/*= Return      : Account State                                                                                                                                                                           =*/
-/*=========================================================================================================================================================================================================*/
+/*=======================================================================================================================================================================================================*/
+/* Description : Receives the cardholder data, start searching for it in the database and updates the accountRefrence variable with the current accoount data                                            */
+/* Inputs      : Refrence to the cardholder data with the type of ST_cardData_t and refrence to a current account data with the type of ST_accountsDB_t                                                  */                                                                
+/* Return      : Account State                                                                                                                                                                           */
+/*=======================================================================================================================================================================================================*/
 EN_serverError_t isValidAccount(ST_cardData_t* cardData, ST_accountsDB_t* accountRefrence);
 
 /*=================================================================*/
@@ -109,34 +111,46 @@ EN_serverError_t isValidAccount(ST_cardData_t* cardData, ST_accountsDB_t* accoun
 /*=================================================================*/
 EN_serverError_t isBlockedAccount(ST_accountsDB_t* accountRefrence);
 
-/*=====================================================================================================================*/
-/*= Description : Checks if amount to be deducted is available                                                        =*/
-/*= Inputs      : Refrence to the terminal data of type ST_terminalData_t and a refrence to the current account data  =*/
-/*= Return      : Account State                                                                                       =*/
-/*=====================================================================================================================*/
+/*===================================================================================================================*/
+/* Description : Checks if amount to be deducted is available                                                        */
+/* Inputs      : Refrence to the terminal data of type ST_terminalData_t and a refrence to the current account data  */
+/* Return      : Account State                                                                                       */
+/*===================================================================================================================*/
 EN_serverError_t isAmountAvailable(ST_terminalData_t* termData, ST_accountsDB_t* accountRefrence);
 
-/*=====================================================================================================================*/
-/*= Description : Saves the transaction and assigns a transaction sequence number for it                              =*/
-/*= Inputs      : Refrence to transaction data array which stores all the transaction                                 =*/
-/*= Return      : Server State                                                                                        =*/
-/*=====================================================================================================================*/
+/*===================================================================================================================*/
+/* Description : Saves the transaction and assigns a transaction sequence number for it                              */
+/* Inputs      : Refrence to transaction data array which stores all the transaction                                 */
+/* Return      : Server State                                                                                        */
+/*===================================================================================================================*/
 EN_serverError_t saveTransaction(ST_transaction_t* transData);
 
-/*========================================================================================*/
-/*= Description : Lists all the saved transactions in the transactions database          =*/
-/*= Inputs      : void                                                                   =*/
-/*= Return      : void                                                                   =*/
-/*========================================================================================*/
+/*======================================================================================*/
+/* Description : Lists all the saved transactions in the transactions database          */
+/* Inputs      : void                                                                   */
+/* Return      : void                                                                   */
+/*======================================================================================*/
 void listSavedTransactions(void);
 
-/*==================================================================================================================================================================================================================================*/
-/*= Description    : Reads Data from the database file and copies it to an array                                                                                                                                                   =*/
-/*= Inputs         : Refrence to an array of type ST_accountsDB_t                                                                                                                                                                  =*/
-/*= Return         : Void                                                                                                                                                                                                          =*/
-/*= Important Note : The file name is: file.txt and should be placed in the main folder of the project and Data format inside the file should be balance,state in decimal value,PAN and followed by a newline right after.         =*/
-/*==================================================================================================================================================================================================================================*/
+/*================================================================================================================================================================================================================================*/
+/* Description    : Reads Data from the database file and copies it to an array                                                                                                                                                   */
+/* Inputs         : Refrence to an array of type ST_accountsDB_t                                                                                                                                                                  */
+/* Return         : Void                                                                                                                                                                                                          */
+/* Important Note : The file name is: file.txt and should be placed in the main folder of the project and Data format inside the file should be balance,state in decimal value,PAN and followed by a newline right after.         */
+/*================================================================================================================================================================================================================================*/
 void getDataBase(ST_accountsDB_t* DB);
 
+/*================================================================================================================================================================================================================================*/
+/* Description    : Updates Data from the database array and copies it to the file                                                                                                                                                */
+/* Inputs         : Refrence to a variable of type ST_accountsDB_t                                                                                                                                                                */
+/* Return         : Server_ok or Internal_server_error                                                                                                                                                                            */
+/* Important Note : The file name is: file.txt and should be placed in the main folder of the project and Data format inside the file should be balance,state in decimal value,PAN and followed by a newline right after.         */
+/*================================================================================================================================================================================================================================*/
+//EN_serverError_t updateDatabase(ST_accountsDB_t* DB);
+//
+//void writeTransaction(ST_transaction_t* transData);
+
+extern ST_transaction_t  transDB[255];
+extern ST_accountsDB_t accountsDB[255];
 
 #endif

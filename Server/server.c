@@ -1,12 +1,8 @@
 #include "server.h"
-#define MAX_LINE_LENGTH 100
+#define MAX_LINE_LENGTH 255
 
 ST_transaction_t  transDB[255] = { 0 };
 ST_accountsDB_t accountsDB[255] = { '\0' };
-
-
-
-
 
 
 EN_transState_t recieveTransactionData(ST_transaction_t* transData)
@@ -94,19 +90,20 @@ void listSavedTransactions(void)
 	{
 		if (transDB[i].transactionSequenceNumber > 0)
 		{
-			printf("################################\n");
+			printf("###########################################\n");
 			printf("Transaction Sequence Number: %d \n",transDB[i].transactionSequenceNumber);
-			printf("Transaction Date: %d \n", transDB[i].terminalData.transactionDate);
-			printf("Transaction Amount: %d \n", transDB[i].terminalData.transAmount);
-			printf("Transaction State: %d \n", transDB[i].transState);
-			printf("Terminal Max Amount: %d \n", transDB[i].terminalData.maxTransAmount);
-			printf("Cardholder Name: %d \n", transDB[i].cardHolderData.cardHolderName);
-			printf("PAN: %d \n", transDB[i].cardHolderData.primaryAccountNumber);
-			printf("Card Expiration Date: %d \n", transDB[i].cardHolderData.cardExpirationDate);
-			printf("################################\n");
+			printf("Transaction Date           : %s \n", transDB[i].terminalData.transactionDate);
+			printf("Transaction Amount         : %f \n", transDB[i].terminalData.transAmount);
+			printf("Transaction State          : %d \n", transDB[i].transState);
+			printf("Terminal Max Amount        : %f \n", transDB[i].terminalData.maxTransAmount);
+			printf("Cardholder Name            : %s \n", transDB[i].cardHolderData.cardHolderName);
+			printf("PAN                        : %s \n", transDB[i].cardHolderData.primaryAccountNumber);
+			printf("Card Expiration Date       : %s \n", transDB[i].cardHolderData.cardExpirationDate);
+			printf("###########################################\n");
 
 		}
-		else {
+		else 
+		{
 			break;
 		}
 	}
@@ -143,18 +140,67 @@ void getDataBase(ST_accountsDB_t* DB)
 	
 }
 
-
+//EN_serverError_t updateDatabase(ST_accountsDB_t* DB)
+//{
+//
+//}
+//
+//void writeTransaction(ST_transaction_t* transData)
+//{
+//	char* path = "transactionData.txt";
+//	char line[MAX_LINE_LENGTH] = { 0 };
+//	FILE* file = fopen(path, "a");
+//	char sn[100];
+//
+//	itoa(transData->transactionSequenceNumber, sn, 10);
+//	strcpy(line, sn); //copies the current string to the string that will be passed to the transactionData.txt
+//	strcat(line, "a,"); //add new line at the end of the string
+//
+//	strcat(line, transData->terminalData.transactionDate);
+//	strcat(line, "b,"); //add new line at the end of the string
+//
+//	ltoa(transData->terminalData.transAmount,sn,10);
+//	strcpy(line, sn); //copies the current string to the string that will be passed to the transactionData.txt
+//	strcat(line, "c,"); //add new line at the end of the string
+//
+//	itoa(transData->transState, sn, 10);
+//	strcpy(line, sn); //copies the current string to the string that will be passed to the transactionData.txt
+//	strcat(line, "d,"); //add new line at the end of the string
+//	
+//	ltoa(transData->terminalData.maxTransAmount, sn, 10);
+//	strcpy(line, sn); //copies the current string to the string that will be passed to the transactionData.txt
+//	strcat(line, "e,"); //add new line at the end of the string
+//
+//	strcat(line, transData->cardHolderData.cardHolderName);
+//	strcat(line, "f,"); //add new line at the end of the string
+//
+//	strcat(line, transData->cardHolderData.primaryAccountNumber);
+//	strcat(line, "g,"); //add new line at the end of the string
+//
+//	strcat(line,transData->cardHolderData.cardExpirationDate);
+//	strcat(line, "h\n");
+//	
+//	
+//	fputs(line, file);
+//}
+//
+//
 //void main()
 //{
 //	getDataBase(accountsDB);
-//	if (!strcmp(accountsDB[0].primaryAccountNumber, "8989374615436851"))
+//	if (!strcmp(accountsDB[0].primaryAccountNumber, "898937461543685221"))
 //	{
 //		printf("FOUND\n");
 //	}
+//	else {
+//		printf("NOT FOUND\n");
+//	}
+//
 //	for(int i=0;i<255 && strlen(accountsDB[i].primaryAccountNumber) != 0;i++)
 //	{
 //		printf("Balance : %f\nState   : %d\nPAN     : %s\n---------------\n", accountsDB[i].balance, accountsDB[i].state, accountsDB[i].primaryAccountNumber);
 //	}
 //
 //	system("pause");
+//	//writeTransaction(transDB);
 //}
