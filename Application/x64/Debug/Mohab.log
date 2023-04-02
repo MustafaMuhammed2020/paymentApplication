@@ -1,0 +1,9 @@
+﻿  app.c
+E:\mohab\academy\sprints\projects\final\paymentApplication\Terminal\card.h(11,35): warning C4142: 'uint32_t': benign redefinition of type
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.35.32215\include\stdint.h(24,28): message : see declaration of 'uint32_t'
+E:\mohab\academy\sprints\projects\final\paymentApplication\Terminal\standard_types.h(19,36): warning C4142: 'uint32_t': benign redefinition of type
+E:\mohab\academy\sprints\projects\final\paymentApplication\Terminal\card.h(11,27): message : see declaration of 'uint32_t'
+E:\mohab\academy\sprints\projects\final\paymentApplication\Card\card.c(22,56): warning C4047: '==': 'uint32_t' differs in levels of indirection from 'void *'
+E:\mohab\academy\sprints\projects\final\paymentApplication\Server\server.c(145,38): warning C4047: 'function': 'char *' differs in levels of indirection from 'uint8_t (*)[20]'
+E:\mohab\academy\sprints\projects\final\paymentApplication\Server\server.c(145,11): warning C4024: 'strcpy': different types for formal and actual parameter 1
+  Mohab.vcxproj -> E:\mohab\academy\sprints\projects\final\paymentApplication\Application\x64\Debug\Mohab.exe
