@@ -1,7 +1,11 @@
 #ifndef _app_h_
 #define _app_h_
 
-#include "\Sprints\paymentApplication\Server\server.h"
+#include "..\Server\server.h"
+
+#include "..\Card\card.c"
+#include "..\Server\server.c"
+#include "..\Terminal\terminal.c"
 
 void appStart(void);
 
