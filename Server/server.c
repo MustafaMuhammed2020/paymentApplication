@@ -1,9 +1,9 @@
 #include "server.h"
 #define MAX_LINE_LENGTH 255
 
-ST_transaction_t  transDB[255] = { 0 };
-ST_accountsDB_t accountsDB[255] = { '\0' };
-ST_accountsDB_t* p;
+ST_transaction_t  transDB[255] = { 0 }; //Global Array for saving the transactions
+ST_accountsDB_t accountsDB[255] = { '\0' }; //Global Array for copying the data from Database file
+ST_accountsDB_t* p; // Global Pointer pointing at the address of the current account data from database array
 
 
 EN_transState_t recieveTransactionData(ST_transaction_t* transData)
@@ -31,7 +31,7 @@ EN_transState_t recieveTransactionData(ST_transaction_t* transData)
 	if(transData->transState == APPROVED)
 	{
 		accountRefrence.balance -= transData->terminalData.transAmount;
-		p->balance = accountRefrence.balance;
+		p->balance = accountRefrence.balance;//Updating the balance in database
 		printf("\nSuccessful Transaction\n");
 	}
 
@@ -45,26 +45,95 @@ EN_transState_t recieveTransactionData(ST_transaction_t* transData)
 }
 
 
+
+//void testPrint(char* functionName,int caseNo,char* caseDesc,char* inputData,char* expectedResult,char* actualResult) {
+//	printf("Tester Name: Omar Ashraf Taha\nFunction Name: %s\nTestCase %d: %s\nInput Data: %s\nExpected Result: %s\nActual Result: %s\n",functionName,caseNo,caseDesc,inputData,expectedResult,actualResult);
+//}
+
+
+//char* transactionToString(ST_transaction_t* transData,char* str) {
+//
+//	char line[MAX_LINE_LENGTH] = { 0 };
+//	char sn[100];
+//
+//
+//	strcpy(line, "Trans date.: ");
+//	strcat(line, transData->terminalData.transactionDate);
+//	strcat(line, ","); //add new line at the end of the string
+//
+//	ltoa(transData->terminalData.transAmount,sn,10);
+//	strcat(line, "Trans amount: ");
+//	strcat(line, sn); //copies the current string to the string that will be passed to the transactionData.txt
+//	strcat(line, ","); //add new line at the end of the string
+//
+//
+//	
+//	ltoa(transData->terminalData.maxTransAmount, sn, 10);
+//	strcat(line, "Max trans amount: ");
+//	strcat(line, sn); //copies the current string to the string that will be passed to the transactionData.txt
+//	strcat(line, ","); //add new line at the end of the string
+//
+//	strcat(line, "cardHolder name: ");
+//	strcat(line, transData->cardHolderData.cardHolderName);
+//	strcat(line, ","); //add new line at the end of the string
+//
+//	strcat(line, "PAN: ");
+//	strcat(line, transData->cardHolderData.primaryAccountNumber);
+//	strcat(line, ","); //add new line at the end of the string
+//
+//	strcat(line, "Expiry date: ");
+//	strcat(line,transData->cardHolderData.cardExpirationDate);
+//	strcpy(str, line);
+//	return line;
+//
+//}
+
+//char* enumToString(EN_transState_t state) {
+//	return state == 0 ? "APPROVED" : state == 1 ? "DECLINED_INSUFFECIENT_FUND" : state == 2 ? "DECLINED_STOLEN_CARD" : state == 3 ? "FRAUD_CARD" : "INTERNAL_SERVER_ERROR";
+//}
+
 //void recieveTransactionDataTest(void)
 //{
-//	printf("")
-//	recieveTransactionData(transDB);
+//	printf("");
+//
+//	ST_cardData_t cardData = { "Omar Ashraf Taha Abdel","8989374615436851","03/24" };
+//	ST_terminalData_t terminalData = { 100.0,5000.0,"01/01/2024" };
+//	ST_transaction_t transData = {cardData,terminalData,APPROVED,0};
+//	recieveTransactionData(&transData);
+//	char strData[255];
+//	transactionToString(&transData, strData);
+//	testPrint("recieveTransactionData",1,"Accepted Transaction", strData, "APPROVED", enumToString(transData.transState));
+//	transData.terminalData.transAmount = 3000;
+//	recieveTransactionData(&transData);
+//	transactionToString(&transData, strData);
+//	testPrint("recieveTransactionData", 2, "Trans amount higher than balance", strData, "DECLINED_INSUFFECIENT_FUND", enumToString(transData.transState));
 //}
 
 EN_serverError_t isValidAccount(ST_cardData_t* cardData, ST_accountsDB_t* accountRefrence)
 {
-	for (int i = 0;i < 255 && strlen(accountsDB[i].primaryAccountNumber) != 0;i++)
+	for (int i = 0;i < 255 && strlen(accountsDB[i].primaryAccountNumber) != 0;i++) //Checking if the current index in the Database if empty or not
 	{
 		if (!strcmp(accountsDB[i].primaryAccountNumber,cardData->primaryAccountNumber)) /*strcmp(string1,string2) compares between 2 strings and return 0 if equal*/
 		{
 			*accountRefrence = accountsDB[i];
-			p = &accountsDB[i];
+			p = &accountsDB[i];//Storing the address of the current account to the global pointer
 			return SERVER_OK;
 		}
 	}
 	accountRefrence = NULL;
 	return ACCOUNT_NOT_FOUND;
 }
+
+//void isValidAccountTest(void) {
+//	ST_cardData_t cardData = { "Omar Ashraf Taha Abdel","8989374615436851","03/24" };
+//	ST_accountsDB_t accountRef;
+//	EN_serverError_t actualResult = isValidAccount(&cardData, &accountRef);
+//	testPrint("isValidAccount", 1, "Testing valid account", "Card PAN: 8989374615436851","SERVER_OK",actualResult == 0 ?"SERVER_OK" :"ACCOUNT_NOT_FOUND");
+//
+//	*(cardData.primaryAccountNumber) = "3211234567891231";
+//	actualResult = isValidAccount(&cardData, &accountRef);
+//	testPrint("isValidAccount", 2, "Testing invalid account", "Card PAN: 3211234567891231", "ACCOUNT_NOT_FOUND", actualResult == 0 ? "SERVER_OK" : "ACCOUNT_NOT_FOUND");
+//}
 
 EN_serverError_t isBlockedAccount(ST_accountsDB_t* accountRefrence)
 {
@@ -80,7 +149,7 @@ EN_serverError_t isAmountAvailable(ST_terminalData_t* termData, ST_accountsDB_t*
 	return SERVER_OK;
 }
 
-EN_serverError_t saveTransaction(ST_transaction_t* transData)
+EN_serverError_t saveTransaction(ST_transaction_t* transData) //Save the Transaction in the global transaction array
 {
 	for (int i = 0;i < 255;i++)
 	{
@@ -88,6 +157,7 @@ EN_serverError_t saveTransaction(ST_transaction_t* transData)
 		{
 			transDB[i] = *transData;
 			transDB[i].transactionSequenceNumber = (i+1);
+			transData->transactionSequenceNumber = (i + 1);
 			break;
 			//return SERVER_OK;
 		}
@@ -102,7 +172,7 @@ void listSavedTransactions(void)
 
 	for (int i = 0;i < 255;i++) 
 	{
-		if (transDB[i].transactionSequenceNumber > 0)
+		if (transDB[i].transactionSequenceNumber > 0) //List the saved transactions in the array 
 		{
 			printf("###########################################\n");
 			printf("Transaction Sequence Number: %d \n",transDB[i].transactionSequenceNumber);
@@ -163,51 +233,73 @@ void getDataBase(ST_accountsDB_t* DB)
 	
 }
 
-//EN_serverError_t updateDatabase(ST_accountsDB_t* DB)
-//{
-//
-//}
-//
-//void writeTransaction(ST_transaction_t* transData)
-//{
-//	char* path = "transactionData.txt";
-//	char line[MAX_LINE_LENGTH] = { 0 };
-//	FILE* file = fopen(path, "a");
-//	char sn[100];
-//
-//	itoa(transData->transactionSequenceNumber, sn, 10);
-//	strcpy(line, sn); //copies the current string to the string that will be passed to the transactionData.txt
-//	strcat(line, "a,"); //add new line at the end of the string
-//
-//	strcat(line, transData->terminalData.transactionDate);
-//	strcat(line, "b,"); //add new line at the end of the string
-//
-//	ltoa(transData->terminalData.transAmount,sn,10);
-//	strcpy(line, sn); //copies the current string to the string that will be passed to the transactionData.txt
-//	strcat(line, "c,"); //add new line at the end of the string
-//
-//	itoa(transData->transState, sn, 10);
-//	strcpy(line, sn); //copies the current string to the string that will be passed to the transactionData.txt
-//	strcat(line, "d,"); //add new line at the end of the string
-//	
-//	ltoa(transData->terminalData.maxTransAmount, sn, 10);
-//	strcpy(line, sn); //copies the current string to the string that will be passed to the transactionData.txt
-//	strcat(line, "e,"); //add new line at the end of the string
-//
-//	strcat(line, transData->cardHolderData.cardHolderName);
-//	strcat(line, "f,"); //add new line at the end of the string
-//
-//	strcat(line, transData->cardHolderData.primaryAccountNumber);
-//	strcat(line, "g,"); //add new line at the end of the string
-//
-//	strcat(line,transData->cardHolderData.cardExpirationDate);
-//	strcat(line, "h\n");
-//	
-//	
-//	fputs(line, file);
-//}
-//
-//
+
+void writeTransaction(ST_transaction_t* transData)
+{
+	char* path = "transactionData.txt";
+	char line[MAX_LINE_LENGTH] = { 0 };
+	FILE* file = fopen(path, "a");
+	char sn[100];
+
+	itoa(transData->transactionSequenceNumber, sn, 10);
+	strcpy(line, sn); //Copy the current string to the string that will be passed to the transactionData.txt
+	strcat(line, ",");
+
+	strcat(line, transData->terminalData.transactionDate);
+	strcat(line, ",");
+
+	ltoa(transData->terminalData.transAmount,sn,10);
+	strcat(line, sn); //Concatenate the current string to the string that will be passed to the transactionData.txt
+	strcat(line, ",");
+
+	//APPROVED, DECLINED_INSUFFECIENT_FUND, DECLINED_STOLEN_CARD, FRAUD_CARD, INTERNAL_SERVER_ERROR
+
+	/*itoa(transData->transState, sn, 10);*/
+	if (transData->transState == 0)
+	{
+		strcat(line, "APPROVED");
+		strcat(line, ",");
+	}
+	if (transData->transState == 1)
+	{
+		strcat(line, "DECLINED_INSUFFECIENT_FUND");
+		strcat(line, ",");
+	}
+	if (transData->transState == 2)
+	{
+		strcat(line, "DECLINED_STOLEN_CARD");
+		strcat(line, ",");
+	}
+	if (transData->transState == 3)
+	{
+		strcat(line, "FRAUD_CARD");
+		strcat(line, ",");
+	}
+	if (transData->transState == 4)
+	{
+		strcat(line, "INTERNAL_SERVER_ERROR");
+		strcat(line, ",");
+	}
+	
+	ltoa(transData->terminalData.maxTransAmount, sn, 10);
+	strcat(line, sn); 
+	strcat(line, ",");
+
+	strcat(line, transData->cardHolderData.cardHolderName); 
+	strcat(line, ","); 
+
+	strcat(line, transData->cardHolderData.primaryAccountNumber);
+	strcat(line, ","); 
+
+	strcat(line,transData->cardHolderData.cardExpirationDate);
+	strcat(line, "\n");//add new line at the end of the string to make sure next entry will be stored at the new line
+	
+	
+	fputs(line, file);
+	fclose(file);
+}
+
+
 //void main()
 //{
 //	getDataBase(accountsDB);
@@ -225,5 +317,13 @@ void getDataBase(ST_accountsDB_t* DB)
 //	}
 //
 //	system("pause");
-//	//writeTransaction(transDB);
+//	
+//}
+
+//void main(){
+//	getDataBase(accountsDB);
+//	recieveTransactionDataTest();
+// 
+//	isValidAccountTest();
+//	system("pause");
 //}

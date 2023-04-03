@@ -1,6 +1,6 @@
 #include "app.h"
 
-void appStart(void)
+void appStart(int x)
 {
 	ST_cardData_t card;
 	ST_terminalData_t terminal;
@@ -23,12 +23,11 @@ void appStart(void)
 	} while (dateState);
 
 	panState=getCardPAN(&card);/*get the card PAN*/
-	if (panState)
+	if (panState) //Check if the PAN Number is Valid
 	{
 		printf("\nWrong PAN!\n");
 		return;
 	}
-
 
 
 	strcpy(transaction.cardHolderData.cardExpirationDate, card.cardExpirationDate);
@@ -49,35 +48,42 @@ void appStart(void)
 	}
 
 	setMaxAmount(&terminal, 5000.00);
+	transaction.terminalData.maxTransAmount = terminal.maxTransAmount;
 	do
 	{
 		Amountstate = getTransactionAmount(&terminal);  // Ask the user for the transaction amount
 
 		Maxamountstate = isBelowMaxAmount(&terminal) ;  // Ceck the amount valid or not
 
-	} while (Maxamountstate!=TERMINAL_OK);
+	} 
+	while (Maxamountstate!=TERMINAL_OK);
 
 
-	transaction.terminalData.maxTransAmount = terminal.maxTransAmount;
 	transaction.terminalData.transAmount = terminal.transAmount;
 	strcpy(transaction.cardHolderData.cardHolderName, card.cardHolderName);
 	getDataBase(accountsDB);
 	error = recieveTransactionData(&transaction);
+	writeTransaction(transDB[x]);
 
 
-
-	while(1)
-	{
-		Amountstate = getTransactionAmount(&terminal);
-		transaction.terminalData.transAmount = terminal.transAmount;
-		error = recieveTransactionData(&transaction);
-	}
 
 }
 
 void main()
 {
-	appStart();
+	uint8_t cont = 'y';
+	int i = 0;
+	while (cont != 'q')
+	{
+		appStart(i);
 
-	system("pause");
+		printf("\nPress q if u wish to quit program\n");
+		cont = getch();
+		cont = tolower(cont);
+		i++;
+	}
+	//appStart();
+
+
+	//system("pause");
 }
